@@ -1,0 +1,26 @@
+{
+    "won": 0,
+    "curTry": 0,
+    "curStake": 1,
+    "curReset": 0,
+    "Challenge": 0,
+    "TotalRounds": 0,
+    "deck": {
+        "b_red": 8,
+        "b_blue": 6,
+        "b_yellow": 6,
+        "b_green": 5,
+        "b_black": 5,
+        "b_magic": 5,
+        "b_nebula": 5,
+        "b_ghost": 5,
+        "b_abandoned": 5,
+        "b_checkered": 5,
+        "b_zodiac": 5,
+        "b_painted": 5,
+        "b_anaglyph": 5,
+        "b_plasma": 5,
+        "b_erratic": 5
+    },
+    "curMaxScore": 0
+}
