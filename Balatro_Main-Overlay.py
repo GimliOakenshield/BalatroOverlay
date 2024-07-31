@@ -22,6 +22,8 @@ from BalatroFileObserver import BalatroFileObserver
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
 BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+JSON_SAVE_DIR = os.path.join(os.getcwd(), "data")
+JSON_SAVE_PATH = os.path.join(JSON_SAVE_DIR, "save.json")
 
 ##########################################################################
 # App pour le serveur flask
@@ -44,8 +46,8 @@ class GameState:
 	curReset: int = 0
 	Challenge: int = 0
 	TotalRounds: int = 0
-	deck: dict = field(default_factory=dict)
 	curMaxScore: int = 0
+	deck: dict = field(default_factory=dict)
 
 	def to_dict(self):
 		return asdict(self)
@@ -62,19 +64,7 @@ class BalaMain():
 		
 		# Variables d'instances pour track les resets/try
 		self.state = GameState()
-		with open('save.json', 'r') as saveDataFile:
-			res = json.load(saveDataFile)
-			self.state.won = res['won']
-			self.state.curTry = res['curTry']
-			self.state.curStake = res['curStake']
-			self.state.curReset = res['curReset']
-			self.state.deck = {deckName: res.get(deckName, None) for deckName in deckList}
-			self.state.curMaxScore = res['curMaxScore']
-		
-		# Si on a aucune donnée pour les decks, il faut aller les chercher
-		if all(value is None for value in self.state.deck.values()):
-			for key, value in {k: v for k, v in self.proFile.dataDict.items() if k.startswith('b_')}.items():
-				self.state.deck[key] = value
+		self.loadJson(JSON_SAVE_PATH)
 		
 		# Création de l'instance du watchddog
 		self.balaFileHandler = BalatroFileObserver(BALATRO_SAVE_DIR)
@@ -93,6 +83,32 @@ class BalaMain():
 		@self.socketio.on('request_initial_data')
 		def handle_reset_counters():
 			self.sendInitDeck()
+	
+	# Charger les données depuis un fichier JSON
+	def loadJson(self, saveFilePath):
+		# Valeurs par défaut pour chaque champ
+		default_values = {
+			'won': False,
+			'curTry': 0,
+			'curStake': 0,
+			'curReset': 0,
+			'curMaxScore': 0,
+		}
+		
+		# Charger les données depuis le JSON
+		with open(saveFilePath, 'r') as saveDataFile:
+			res = json.load(saveDataFile)
+			
+			# Lire les données si elles existent, sinon garder la valeur par défaut.
+			for key, default in default_values.items():
+				setattr(self.state, key, res.get(key, default))
+			
+			self.state.deck = {deckName: res.get(deckName, None) for deckName in deckList}
+		
+		# Si on a aucune donnée pour les decks, il faut aller les chercher
+		if all(value is None for value in self.state.deck.values()):
+			for key, value in {k: v for k, v in self.proFile.dataDict.items() if k.startswith('b_')}.items():
+				self.state.deck[key] = value
 	
 	def start(self):
 		# Démarrer le serveur Flask et la surveillance des fichiers
