@@ -9,6 +9,7 @@ import threading
 from collections import defaultdict
 
 from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
 from watchdog.events import PatternMatchingEventHandler
 
 ##########################################################################
@@ -36,7 +37,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 		self._initialize_observer()
 
 	def _initialize_observer(self):
-		self.observer = Observer()
+		self.observer = PollingObserver(timeout=0.1)
 		self.observer.schedule(self, self.dirPath, recursive=GO_RECURSIVELY)
 	
 	def run(self):
