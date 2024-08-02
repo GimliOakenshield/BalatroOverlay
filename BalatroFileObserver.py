@@ -19,6 +19,7 @@ IGNORE_PATTERNS = None
 IGNORE_DIRECTORIES = True
 CASE_SENSITIVE = True
 GO_RECURSIVELY = False
+POLLING_INTERVAL = 0.1
 EVENT_DELAY = 0.5  # Délai en secondes
 
 ##########################################################################
@@ -37,7 +38,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 
 	def _initialize_observer(self):
 		self.observer = Observer()
-		self.observer.schedule(self, self.dirPath, recursive=GO_RECURSIVELY)
+		self.observer.schedule(self, self.dirPath, recursive=GO_RECURSIVELY, polling_interval=POLLING_INTERVAL)
 	
 	def run(self):
 		self.observer.start()
