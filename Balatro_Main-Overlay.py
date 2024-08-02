@@ -21,7 +21,8 @@ from BalatroFileObserver import BalatroFileObserver
 # Chemins d'accès
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
-BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 JSON_SAVE_DIR = os.path.join(os.getcwd(), "data")
 JSON_SAVE_PATH = os.path.join(JSON_SAVE_DIR, "save.json")
 
@@ -58,8 +59,8 @@ class BalaMain():
 		self.socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 		
 		# Création des instances de fichiers de config Balatro
-		self.saveFile = BalaSave(BalaSave.filePath)
-		self.proFile = BalaProfile(BalaProfile.filePath)
+		self.saveFile = BalaSave(BALATRO_SAVE_DIR)
+		self.proFile = BalaProfile(BALATRO_SAVE_DIR)
 		self.filesList = [self.saveFile, self.proFile]
 		
 		# Variables d'instances pour track les resets/try
@@ -164,12 +165,17 @@ class BalaMain():
 			# On récupère les données de la classe secondaire
 			filePath = self.balaFileHandler.queue.get()
 			confFile = next((x for x in self.filesList if x.filePath == filePath), None)
+			print(f"{filePath =}")
+			print(f"{confFile =}")
+			for x in self.filesList:
+				print(f"{x.filePath =}")
 			
 			# Check si c'est un fichier qu'on traque, sinon on attend à nouveau une mise à jour de fichier
 			if confFile:
 				# S'il s'agit d'un des fichiers qu'on surveille, on interroge les classes concernées
 				change = 0
 				res = confFile.getUpdatedData()
+				print(res)
 				
 				if 'deleted' in res:
 					print(f"c'est une fin de partie ! {self.state.won =}")

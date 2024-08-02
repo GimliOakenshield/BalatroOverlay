@@ -61,14 +61,13 @@ class BalaConfFile(object):
 # Classe BalaProfile gérant l'extraction des données depuis un fichier de config de BAlatro
 ##########################################################################
 class BalaProfile(BalaConfFile):
-	filePath = os.path.join(os.getenv('APPDATA'), "Balatro", "1", "profile.jkr")
-	# filePath = os.path.join(os.getenv('APPDATA'), "Balatro", "2", "profile.jkr")
 	DECK_LIST = ['b_red', 'b_blue', 'b_yellow', 'b_green', 'b_black', 'b_magic', 'b_nebula', 'b_ghost', 'b_abandoned', 'b_checkered', 'b_zodiac', 'b_painted', 'b_anaglyph', 'b_plasma', 'b_erratic']
 	
 	STAKE_LIST = ['white', 'red', 'green', 'black', 'blue', 'violet', 'orange', 'gold']
 	
-	def __init__(self, filePath = None):
-		super().__init__(filePath)
+	def __init__(self, dirPath):
+		self.filePath = os.path.join(dirPath, "profile.jkr")
+		super().__init__(self.filePath)
 	
 	def loadFile(self, debug = False):
 		tempData = super().loadFile(debug)
@@ -100,11 +99,9 @@ class BalaProfile(BalaConfFile):
 # Classe BalaSave gérant l'extraction des données depuis un fichier de config de BAlatro
 ##########################################################################
 class BalaSave(BalaConfFile):
-	filePath = os.path.join(os.getenv('APPDATA'), "Balatro", "1", "save.jkr")
-	# filePath = os.path.join(os.getenv('APPDATA'), "Balatro", "2", "save.jkr")
-	
-	def __init__(self, filePath = None):
-		super().__init__(filePath)
+	def __init__(self, dirPath):
+		self.filePath = os.path.join(dirPath, "profile.jkr")
+		super().__init__(self.filePath)
 	
 	def loadFile(self, debug = False):
 		tempData = super().loadFile(debug)
