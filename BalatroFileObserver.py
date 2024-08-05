@@ -38,7 +38,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 
 	def _initialize_observer(self):
 		self.observer = Observer()
-		self.observer.schedule(self, self.dirPath, recursive=GO_RECURSIVELY, polling_interval=POLLING_INTERVAL)
+		self.observer.schedule(self, self.dirPath, recursive=GO_RECURSIVELY)
 	
 	def run(self):
 		self.observer.start()
@@ -53,6 +53,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 			self.last_event_time[event.src_path] = current_time
 			self.queue.put(event.src_path)
 			self.event.set()
+			print(f"Modifié : {current_time} - {event.src_path}")
 	
 	def on_deleted(self, event):
 		self._handle_event(event)
@@ -71,7 +72,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 
 print("OK")
 if __name__ == "__main__":
-	balatroSaveDir = os.path.join(os.getenv('APPDATA'), "Balatro", "1")
+	balatroSaveDir = os.path.join(os.getenv('APPDATA'), "Balatro", "3")
 	
 	balObs = BalatroFileObserver(balatroSaveDir)
 	
