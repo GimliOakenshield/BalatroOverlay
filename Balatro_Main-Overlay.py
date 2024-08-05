@@ -21,8 +21,8 @@ from BalatroFileObserver import BalatroFileObserver
 # Chemins d'accès
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
-# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
-BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
+BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 JSON_SAVE_DIR = os.path.join(os.getcwd(), "data")
 JSON_SAVE_PATH = os.path.join(JSON_SAVE_DIR, "save.json")
 
@@ -202,12 +202,13 @@ class BalaMain():
 					self.state.curMaxScore = 0
 					change += 1
 				
-				if 'chips' in res and res['chips'][0] <= res['chips'][1]:
-					curScore = res['chips'][1] - res['chips'][0]
-					if curScore > self.state.curMaxScore:
-						self.state.curMaxScore = curScore
-						self.sendUpdtMaxScore()
-						change += 1
+				if 'chips' in res and res['chips'][0]:
+					if res['chips'][0] <= res['chips'][1]:
+						curScore = res['chips'][1] - res['chips'][0]
+						if curScore > self.state.curMaxScore:
+							self.state.curMaxScore = curScore
+							self.sendUpdtMaxScore()
+							change += 1
 				
 				# Chercher si l'on vient de trouver un Deck "mis à jour"
 				deckNames = BalaProfile.DECK_LIST & res.keys()
