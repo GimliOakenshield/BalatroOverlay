@@ -133,7 +133,7 @@ class BalaMain():
 		if self.state.curMaxScore < 1e12:
 			dispScore = f"{self.state.curMaxScore:,}"
 		else:
-			dispScore = f"{self.state.curMaxScore:.2E}".replace("+", "")
+			dispScore = f"{self.state.curMaxScore:.3E}".replace("+", "").replace("E", "e")
 		print(f"Update max score : {dispScore} - {BalaProfile.STAKE_LIST[self.state.curStake - 1]}")
 		self.socketio.emit('new_max_score', {'score': dispScore, 'stake': BalaProfile.STAKE_LIST[self.state.curStake - 1]}, namespace='/')
 	

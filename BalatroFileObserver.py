@@ -20,7 +20,7 @@ IGNORE_DIRECTORIES = True
 CASE_SENSITIVE = True
 GO_RECURSIVELY = False
 POLLING_INTERVAL = 0.1
-EVENT_DELAY = 0.5  # Délai en secondes
+EVENT_DELAY = 0.05  # Délai en secondes
 
 ##########################################################################
 # Classe balatroFileObserver gérant la surveillance
@@ -72,7 +72,8 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 
 print("OK")
 if __name__ == "__main__":
-	balatroSaveDir = os.path.join(os.getenv('APPDATA'), "Balatro", "3")
+	balatroSaveDir = os.path.join(os.getenv('APPDATA'), "Balatro", "1")
+	# balatroSaveDir = os.path.join(os.getenv('APPDATA'), "Balatro", "3")
 	
 	balObs = BalatroFileObserver(balatroSaveDir)
 	

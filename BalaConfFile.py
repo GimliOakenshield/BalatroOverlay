@@ -11,6 +11,7 @@ import zlib
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
 BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 
 ##########################################################################
 # Classe BalaConfFile gérant l'extraction des données depuis un fichier de config de BAlatro
@@ -23,7 +24,7 @@ class BalaConfFile(object):
 		if self.filePath:
 			self.loadFile()
 	
-	def loadFile(self, debug = False):
+	def loadFile(self, debug = True):
 		if debug : print(f"\nCharger les données depuis : {self.filePath}")
 		try:
 			with open(self.filePath, 'rb') as saveFile:
@@ -100,7 +101,7 @@ class BalaProfile(BalaConfFile):
 ##########################################################################
 class BalaSave(BalaConfFile):
 	def __init__(self, dirPath):
-		self.filePath = os.path.join(dirPath, "profile.jkr")
+		self.filePath = os.path.join(dirPath, "save.jkr")
 		super().__init__(self.filePath)
 	
 	def loadFile(self, debug = False):
@@ -108,6 +109,7 @@ class BalaSave(BalaConfFile):
 		if tempData == -1:
 			return -1
 		
+		# print(f"{tempData}")
 		# Extraire uniquement les données utiles
 		self.dataDict = {}
 		self.dataDict['seed'] = tempData['GAME']['pseudorandom']['seed'] if tempData else None
