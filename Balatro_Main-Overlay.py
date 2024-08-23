@@ -199,8 +199,6 @@ class BalaMain():
 		print(f"\nC'est une fin de partie ! {self.state.won =}")
 	
 	def chipsScored(self, prevChips, newChips):
-		print(f"\nDes chips ont été scorés : {self.state.curChips} => {newChips =} ")
-		print(f"\nDes chips ont été scorés : {self.state.curMaxScore =} ")
 		curScore = newChips - self.state.curChips
 		self.state.curChips = newChips
 		if curScore > self.state.curMaxScore:
@@ -219,7 +217,7 @@ class BalaMain():
 			filePath = self.balaFileHandler.queue.get()
 			confFile = next((x for x in self.filesList if x.filePath == filePath), None)
 			# print(f"{filePath =}")
-			print(f"\n-----\n{confFile =}")
+			# print(f"\n-----\n{confFile =}")
 			# for x in self.filesList:
 				# print(f"{x.filePath =}")
 			

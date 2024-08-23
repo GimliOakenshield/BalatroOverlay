@@ -123,7 +123,7 @@ class BalaSave(BalaConfFile):
 		self.dataDict['deckName'] = tempData['BACK']['name'] if tempData else None
 		self.dataDict['stake'] = tempData['GAME']['stake'] if tempData else None
 		
-		print(f"Chips {self.dataDict['chips']}")
+		# print(f"Chips {self.dataDict['chips']}")
 		# print(f"Stake {self.dataDict['stake']}")
 		
 		# self.dataDict['chips_text'] = tempData['GAME']['chips_text'] if tempData else False
