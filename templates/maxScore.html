@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Deck overlays</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+	<style>
+		@font-face {
+			font-family: 'm6x11plus';
+			src: url("{{ url_for('static', filename='fonts/m6x11plus.woff') }}") format("woff"),
+				 url("{{ url_for('static', filename='fonts/m6x11plus.ttf') }}") format("truetype");
+			font-weight: normal;
+			font-style: normal;
+		}
+		body * {
+			font-family: 'm6x11plus', sans-serif;
+			color: #f8f8f8; 
+			font-size: 40px;
+		}
+		.container {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			background-color: rgba(0, 0, 0, 0.80);
+			border-radius: 15px;
+			padding: 10px 10px 10px 20px;
+			margin: 2px;
+		}
+		.data-display {
+			transition: transform 0.3s ease-in-out;
+			background-color: rgba(128, 128, 128, 0.45);
+			border-radius: 10px;
+			margin: 0 0px 0 auto;
+			padding: 3px 0 5px 0;
+			width: 327px;
+			height: 45px; /* Ajout d'une hauteur fixe */
+			text-align: center;
+			display: flex; /* Utilisation de flexbox */
+			justify-content: center; /* Centrage horizontal */
+			align-items: center; /* Centrage vertical */
+		}
+		.max-score {
+			font-size: 50px;
+		}
+		.data-display.update {
+			transform: scale(1.5);
+		}
+		.stake-image {
+			margin-top: 10px;
+			margin-right: 15px;
+			filter: drop-shadow(1px 1px 4px #000000) drop-shadow(-1px -1px 4px #000000);
+			<!-- margin: 5px 15px 0 auto; /* ajout d'une marge à droite de 15px */ -->
+		}
+
+	</style>
+</head>
+<body>
+	<div class="container">
+		Score Max
+		<div id="data-display" class="data-display">
+			<div id="overlay-image">
+				<img id="stake-image" class="stake-image" src="{{ url_for('static', filename='BalatroStakes/white.png') }}" height="35">
+			</div>
+			<span id="max-score" class="max-score">0</span>
+		</div>
+	</div>
+	<script>
+	document.addEventListener('DOMContentLoaded', (event) => {
+		const socket = io();
+		const dataDisplay = document.getElementById('data-display');
+		const maxScore = document.getElementById('max-score');
+		const stakeImage = document.getElementById('stake-image');
+		
+		socket.on('connect', function() {
+			console.log('Connecté au serveur WebSocket');
+		});
+		
+		socket.on('new_max_score', function(data) {
+			console.log('Nouvelle donnée reçue:', data);
+			
+			const score = data.score;
+			const stake = data.stake;
+			
+			maxScore.textContent = score;
+			stakeImage.src = `/static/BalatroStakes/${stake}.png`;
+			
+			dataDisplay.classList.add('update');
+			setTimeout(function() {
+				dataDisplay.classList.remove('update');
+			}, 500);
+		});
+	});
+	</script>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

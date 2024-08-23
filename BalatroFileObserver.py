@@ -46,6 +46,7 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 	@staticmethod
 	def _is_event_valid(last_time, current_time):
 		return current_time - last_time > EVENT_DELAY
+		# return True
 	
 	def _handle_event(self, event):
 		current_time = time.time()
@@ -53,7 +54,9 @@ class BalatroFileObserver(PatternMatchingEventHandler, threading.Thread):
 			self.last_event_time[event.src_path] = current_time
 			self.queue.put(event.src_path)
 			self.event.set()
-			print(f"Modifié : {current_time} - {event.src_path}")
+			# print(f"Modifié : {current_time} - {event.src_path}")
+		else:
+			print(f"Fichier ignoré : {event.src_path}")
 	
 	def on_deleted(self, event):
 		self._handle_event(event)

@@ -1,0 +1,47 @@
+<!-- templates/admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Admin Interface</title>
+		<script src=https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js></script>
+	</head>
+	<body>
+		<h1>Admin Interface</h1>
+		<button id="resetBtn">Reset counters</button>
+		<button id="stopBtn">Stop Script</button>
+
+		<div>
+			<p>Current Try: <span id="curTry">0</span></p>
+			<p>Current Reset: <span id="curReset">0</span></p>
+		</div>
+
+		<script>
+			const socket = io();
+
+			document.getElementById('resetBtn').addEventListener('click', () => {
+				socket.emit('reset_counters');
+			});
+
+			document.getElementById('stopBtn').addEventListener('click', () => {
+				socket.emit('stop_script');
+			});
+
+			socket.on('new_data', function(data) {
+				console.log('Nouvelle donnée reçue:', data);
+				document.getElementById('curReset').textContent = data.value;
+			});
+			socket.on('new_try', function(data) {
+				console.log('Nouvelle donnée reçue (Essais):', data);
+				document.getElementById('curTry').textContent = data.value;
+			});
+
+			socket.on('script_status', (data) => {
+				if (data.status === 'stopping') {
+					alert('Script is stopping...');
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -10,8 +10,8 @@ import zlib
 # Chemins d'accès
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
-BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
-# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 
 ##########################################################################
 # Classe BalaConfFile gérant l'extraction des données depuis un fichier de config de BAlatro
@@ -25,7 +25,7 @@ class BalaConfFile(object):
 			self.loadFile()
 	
 	def loadFile(self, debug = True):
-		if debug : print(f"\nCharger les données depuis : {self.filePath}")
+		# if debug : print(f"\nCharger les données depuis : {self.filePath}")
 		try:
 			with open(self.filePath, 'rb') as saveFile:
 				decompData = zlib.decompress(saveFile.read(), wbits=-zlib.MAX_WBITS)
@@ -39,7 +39,7 @@ class BalaConfFile(object):
 	def getUpdatedData(self):
 		# Garder en mémoire les données d'avant
 		changes = {}
-		oldData = self.dataDict
+		oldData = self.dataDict.copy()
 		
 		# Charger les nouvelles données
 		res = self.loadFile()
@@ -50,10 +50,14 @@ class BalaConfFile(object):
 		allKeys = set(oldData.keys()) | set(self.dataDict.keys())
 		diffDict = {}
 		
+		# print(f"Chips présent dans OldData : {'chips' in oldData}")
+		# print(f"Chips présent dans allKeys : {'chips' in allKeys}")
+		
 		for key in allKeys:
 			if oldData.get(key) != self.dataDict.get(key):
 				changes[key] = (oldData.get(key), self.dataDict.get(key))
-				# print(f"{key} : {oldData.get(key)} => {self.dataDict.get(key)}")
+				# if key == 'chips':
+					# print(f"{key} : {oldData.get(key)} => {self.dataDict.get(key)}")
 		# if changes:
 			# print("_____\n")
 		return changes
@@ -64,7 +68,7 @@ class BalaConfFile(object):
 class BalaProfile(BalaConfFile):
 	DECK_LIST = ['b_red', 'b_blue', 'b_yellow', 'b_green', 'b_black', 'b_magic', 'b_nebula', 'b_ghost', 'b_abandoned', 'b_checkered', 'b_zodiac', 'b_painted', 'b_anaglyph', 'b_plasma', 'b_erratic']
 	
-	STAKE_LIST = ['white', 'red', 'green', 'black', 'blue', 'violet', 'orange', 'gold']
+	STAKE_LIST = ['none', 'white', 'red', 'green', 'black', 'blue', 'violet', 'orange', 'gold']
 	
 	def __init__(self, dirPath):
 		self.filePath = os.path.join(dirPath, "profile.jkr")
@@ -119,6 +123,7 @@ class BalaSave(BalaConfFile):
 		self.dataDict['deckName'] = tempData['BACK']['name'] if tempData else None
 		self.dataDict['stake'] = tempData['GAME']['stake'] if tempData else None
 		
+		print(f"Chips {self.dataDict['chips']}")
 		# print(f"Stake {self.dataDict['stake']}")
 		
 		# self.dataDict['chips_text'] = tempData['GAME']['chips_text'] if tempData else False

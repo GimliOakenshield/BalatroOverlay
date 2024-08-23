@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Deck overlays</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+	<style>
+		@font-face {
+			font-family: 'm6x11plus';
+			src: url("{{ url_for('static', filename='fonts/m6x11plus.woff') }}") format("woff"),
+				 url("{{ url_for('static', filename='fonts/m6x11plus.ttf') }}") format("truetype");
+			font-weight: normal;
+			font-style: normal;
+		}
+		
+		@keyframes fadeInOut {
+			0%, 25% { opacity: 0; }
+			27.5%, 72.5% { opacity: 1; }
+			75%, 100% { opacity: 0; }
+		}
+		
+		@keyframes fadeOutIn {
+			0%, 22.5% { opacity: 1; }
+			25%, 75% { opacity: 0; }
+			77.5%, 100% { opacity: 1; }
+		}
+		
+		#output {
+			display: inline-block;
+			font-family: 'm6x11plus';
+			border-radius: 20px; 
+			padding: 10px; 
+			background-color: rgba(0, 0, 0, 0.65);
+		}
+		.container {
+			position: relative;
+			display: inline-block;
+			margin: 1px 2px 1px 2px;
+		}
+		.image { display: block; }
+		.number, .number_challenge {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 45px;
+			color: #eeeeee;
+			text-shadow: 3px 3px 2px rgba(0,0,0,0.8),
+						 -3px 3px 2px rgba(0,0,0,0.8),
+						 -3px -3px 2px rgba(0,0,0,0.8),
+						 3px -3px 2px rgba(0,0,0,0.8);
+		}
+		.number {
+			animation: fadeOutIn 30s linear infinite;
+			transition: opacity 3s ease-in-out;
+		}
+		.deck-container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		
+		.overlay-image {
+			position: absolute;
+			top: 7px;
+			right: 7px;
+			filter: drop-shadow(2px 2px 3px #000000) drop-shadow(-2px -2px 3px #000000);
+			animation: fadeInOut 30s linear infinite;
+			transition: opacity 3s ease-in-out;
+		}
+	</style>
+</head>
+<body>
+	<div id="output">
+		{% set number = 1 %}
+		{% set stake = 'white' %}
+		{% for deck_name in deck_list %}
+			<div class="container">
+				<img src="{{ url_for('static', filename='BalatroDecks/' + deck_name + '.png') }}" height="70" class="image"/>
+				<div id="{{ deck_name }}_number" class="{{ 'number_challenge' if deck_name == 'b_challenge' else 'number' }}">{{ number }}</div>
+				{% if deck_name != 'b_challenge' %}
+					<div class="overlay-image">
+						<img id="{{ deck_name }}_stake" src="{{ url_for('static', filename='BalatroStakes/' + stake + '.png') }}" height="28" class="overlay-png">
+					</div>
+				{% endif %}
+			</div>
+			{% if not loop.last %}
+				{% if loop.index0 % 2 != 0 %}<br/>{% endif %}
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			var socket = io();
+			
+			socket.on('connect', function() {
+				console.log('Connected to server');
+				// Demande les données initiales une fois connecté
+				socket.emit('request_initial_data');
+			});
+
+			socket.on('new_deck', function(data) {
+				const deckName = data.deck;
+				const stakeLevel = data.stake;
+				const stakeName = data.stakeName;
+
+				// Update the number
+				const numberElement = document.getElementById(`${deckName}_number`);
+				if (numberElement) {
+					numberElement.textContent = stakeLevel;
+				}
+
+				// Update the stake image
+				const stakeImage = document.getElementById(`${deckName}_stake`);
+				if (stakeImage) {
+					stakeImage.src = `/static/BalatroStakes/${stakeName}.png`;
+				}
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Affichage de données en temps réel</title>
+	<link rel="preload" href="{{ url_for('static', filename='fonts/m6x11plus.ttf') }}" as="font" type="font/ttf" crossorigin="anonymous">
+	<link rel="preload" href="{{ url_for('static', filename='fonts/m6x11plus.woff') }}" as="font" type="font/woff" crossorigin="anonymous">
+	<style>
+		@font-face {
+			font-family: 'm6x11plus';
+			src: url("/static/fonts/m6x11plus.woff") format("woff"),
+				url("/static/fonts/m6x11plus.ttf") format("truetype");
+			font-weight: normal;
+			font-style: normal;
+		}
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			font-size: 40px;
+			color: white;
+			background-color: rgba(60, 60, 60, 0.0);
+		}
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: rgba(0, 0, 0, 0.60);
+			border-radius: 20px;
+			padding: 5px 10px 10px 10px;
+			margin: 0px 7px 0px 7px;
+		}
+		.reset-display {
+		}
+		.data-display {
+			transition: transform 0.3s ease-in-out;
+			background-color: rgba(128, 128, 128, 0.4);
+			border-radius: 10px;
+			margin-top: 5px;
+			padding: 5px;
+			width: 100px;
+			height: 40px; /* Ajout d'une hauteur fixe */
+			font-size: 50px;
+			text-align: center;
+			color: #37b787; 
+			display: flex; /* Utilisation de flexbox */
+			justify-content: center; /* Centrage horizontal */
+			align-items: center; /* Centrage vertical */
+		}
+		.data-display.update {
+			transform: scale(1.5);
+		}
+		.outer-text {
+			<!-- margin-right: 65px; /* Ajustez cette valeur selon la largeur de votre zone intérieure */ -->
+			padding-top: 165px; /* Ajustez cette valeur selon la largeur de votre zone intérieure */
+		}
+		body * {
+		  font-family: 'm6x11plus', sans-serif;
+		}
+		.outer-text * {
+		  font-family: 'm6x11plus', sans-serif;
+		}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="reset-display">Resets</div>
+		<div id="data-display" class="data-display">???</div>
+	</div>
+	<div class="container">
+		<div class="reset-display">Essais</div>
+		<div id="data-display2" class="data-display">???</div>
+	</div>
+	
+	<script>
+	document.addEventListener('DOMContentLoaded', (event) => {
+		const socket = io();
+		const dataDisplay = document.getElementById('data-display');
+		const dataDisplay2 = document.getElementById('data-display2');
+		
+		socket.on('connect', function() {
+			console.log('Connecté au serveur WebSocket');
+		});
+
+		socket.on('disconnect', function() {
+			console.log('Déconnecté du serveur WebSocket');
+		});
+
+		socket.on('new_data', function(data) {
+			console.log('Nouvelle donnée reçue:', data);
+			dataDisplay.textContent = data.value;
+			dataDisplay.classList.add('update');
+			setTimeout(function() {
+				dataDisplay.classList.remove('update');
+			}, 300);
+		});
+
+		socket.on('new_try', function(data) {
+			console.log('Nouvelle donnée reçue (Essais):', data);
+			dataDisplay2.textContent = data.value;
+			dataDisplay2.classList.add('update');
+			setTimeout(function() {
+				dataDisplay2.classList.remove('update');
+			}, 300);
+		});
+	});
+	</script>
+</body>
+</html>
