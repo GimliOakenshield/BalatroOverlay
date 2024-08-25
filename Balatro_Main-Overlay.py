@@ -14,15 +14,14 @@ from dataclasses import dataclass, asdict, field
 
 from BalaConfFile import BalaSave
 from BalaConfFile import BalaProfile
-# from testEventHandler import FileHandler
 from BalatroFileObserver import BalatroFileObserver
 
 ##########################################################################
 # Chemins d'accès
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
-# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
-BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
+BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 JSON_SAVE_DIR = os.path.join(os.getcwd(), "data")
 JSON_SAVE_PATH = os.path.join(JSON_SAVE_DIR, "save.json")
 
@@ -83,7 +82,7 @@ class BalaMain():
 			self.socketio.emit('counters_updated', result)
 		
 		@self.socketio.on('request_initial_data')
-		def handle_resetCounters():
+		def handle_requestData():
 			self.sendInitDeck()
 	
 	######################################################################
@@ -105,11 +104,16 @@ class BalaMain():
 			dispScore = f"{self.state.curMaxScore:,}"
 		else:
 			dispScore = f"{self.state.curMaxScore:.3E}".replace("+", "").replace("E", "e")
+		print(f"Update max score : {dispScore} - {self.state.curStake =}")
 		print(f"Update max score : {dispScore} - {BalaProfile.STAKE_LIST[self.state.curStake]}")
 		self.socketio.emit('new_max_score', {'score': dispScore, 'stake': BalaProfile.STAKE_LIST[self.state.curStake]}, namespace='/')
 	
 	def sendUpdtDeck(self, deckName, stakeLevel):
-		self.socketio.emit('new_deck', {'deck': deckName, 'stake': stakeLevel, 'stakeName': BalaProfile.STAKE_LIST[stakeLevel]}, namespace='/')
+		print(f"Update deck : {deckName} - {stakeLevel}")
+		try:
+			self.socketio.emit('new_deck', {'deck': deckName, 'stake': stakeLevel, 'stakeName': BalaProfile.STAKE_LIST[stakeLevel]}, namespace='/')
+		except:
+			self.socketio.emit('new_deck', {'deck': deckName, 'stake': stakeLevel}, namespace='/')
 	
 	def sendUpdtCounters(self):
 		self.socketio.emit('new_try', {'value': self.state.curTry}, namespace='/')
@@ -138,7 +142,9 @@ class BalaMain():
 			for key, default in default_values.items():
 				setattr(self.state, key, res.get(key, default))
 			
-			self.state.deck = {deckName: res.get(deckName, 0) for deckName in deckList}
+			self.state.deck = {deckName: res['deck'].get(deckName, 0) for deckName in deckList}
+			print(f"{self.state.deck =}")
+			print(f"{res.keys() =}")
 		
 		# Si on a aucune donnée pour les decks, il faut aller les chercher
 		if all(value is None for value in self.state.deck.values()):
@@ -236,10 +242,10 @@ class BalaMain():
 			self.gameEnd()
 		
 		if 'stake' in res:
-			self.newStake(stake = res['stake'])
+			self.newStake(stake = res['stake'][1])
 		
 		if 'seed' in res:
-			self.newGame(seed = res['seed'])
+			self.newGame(seed = res['seed'][1])
 		
 		if 'round' in res:
 			self.newRound(res['round'][0], res['round'][1])

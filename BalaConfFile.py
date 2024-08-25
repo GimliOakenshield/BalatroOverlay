@@ -10,8 +10,8 @@ import zlib
 # Chemins d'accès
 ##########################################################################
 APPDATA_PATH = os.getenv('APPDATA')
-# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
-BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
+BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "1")
+# BALATRO_SAVE_DIR = os.path.join(APPDATA_PATH, "Balatro", "3")
 
 ##########################################################################
 # Classe BalaConfFile gérant l'extraction des données depuis un fichier de config de BAlatro
@@ -25,7 +25,7 @@ class BalaConfFile(object):
 			self.loadFile()
 	
 	def loadFile(self, debug = True):
-		# if debug : print(f"\nCharger les données depuis : {self.filePath}")
+		if debug : print(f"\nCharger les données depuis : {self.filePath}")
 		try:
 			with open(self.filePath, 'rb') as saveFile:
 				decompData = zlib.decompress(saveFile.read(), wbits=-zlib.MAX_WBITS)
