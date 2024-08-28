@@ -21,7 +21,7 @@
 			const socket = io();
 
 			document.getElementById('resetBtn').addEventListener('click', () => {
-				socket.emit('reset_counters');
+				socket.emit('resetCounters');
 			});
 
 			document.getElementById('stopBtn').addEventListener('click', () => {
