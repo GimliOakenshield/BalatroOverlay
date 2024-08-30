@@ -263,11 +263,13 @@ class BalaMain():
 				print(f"Je ne suis pas sensé trouver plusieurs decks en même temps !")
 				raise
 			deckName = next(iter(deckNames))
+			self.state.deck[deckName] = res[deckName][1]
 			self.sendUpdtDeck(deckName, res[deckName][1])
 		
 		# Chercher si l'on vient de gagner un challenge
 		if 'Challenge' in res:
-			self.sendUpdtDeck('b_challenge', res['Challenge'])
+			self.state.Challenge = res['Challenge'][1]
+			self.sendUpdtDeck('b_challenge', res['Challenge'][1])
 		
 		# Enregistrer dans le JSON et l'envoyer à la page
 		self.saveCounters()
